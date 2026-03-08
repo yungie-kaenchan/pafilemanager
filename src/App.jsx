@@ -29,13 +29,30 @@ async function extractTextFromFile(file){
 }
 
 async function callClaude(messages,system){
-  const res=await fetch("/api/extract",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:600,system,messages})});
-  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error||`Server error ${res.status}`);}
-  const data=await res.json();
-  if(data.error)throw new Error(data.error);
-  const txt=data.content?.find(b=>b.type==="text")?.text||"";
-  const clean=txt.replace(/```json[\s\S]*?```/g,m=>m.slice(7,-3)).replace(/```/g,"").trim();
-  try{return JSON.parse(clean);}catch{return{activity:txt.slice(0,400),score:""};}
+  let payload;
+  try { payload = JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:800,system,messages}); }
+  catch(e) { throw new Error("ไม่สามารถเตรียมข้อมูลได้: ไฟล์อาจใหญ่เกินไป"); }
+
+  // Guard: edge functions have ~4MB body limit — warn early
+  if(payload.length > 3_500_000) throw new Error("ไฟล์ใหญ่เกินไป (>3MB) กรุณาใช้ไฟล์ขนาดเล็กกว่า");
+
+  let res;
+  try { res = await fetch("/api/extract",{method:"POST",headers:{"Content-Type":"application/json"},body:payload}); }
+  catch(e) { throw new Error("เชื่อมต่อ server ไม่ได้ — ตรวจสอบอินเทอร์เน็ต"); }
+
+  let data;
+  try { data = await res.json(); }
+  catch(e) { throw new Error(`Server ตอบกลับผิดพลาด (HTTP ${res.status})`); }
+
+  if(!res.ok || data.error) {
+    const msg = typeof data.error === "string" ? data.error
+               : data.error?.message || `Server error ${res.status}`;
+    throw new Error(msg);
+  }
+  const txt = data.content?.find(b=>b.type==="text")?.text || "";
+  const clean = txt.replace(/```json[\s\S]*?```/g,m=>m.slice(7,-3)).replace(/```/g,"").trim();
+  try { return JSON.parse(clean); }
+  catch { return {activity: txt.slice(0,500), score:""}; }
 }
 
 function Toast({toast}){if(!toast)return null;const bg=toast.type==="error"?T.err:toast.type==="info"?T.accent:T.primary;return(<div style={{position:"fixed",top:20,right:20,zIndex:9999,padding:"12px 20px",borderRadius:12,background:bg,color:"white",fontSize:18,fontWeight:500,boxShadow:"0 8px 32px rgba(0,0,0,0.18)",maxWidth:380,lineHeight:1.5}}>{toast.msg}</div>);}
@@ -173,16 +190,26 @@ export default function PAAssistant(){
     try{
       const contents=await Promise.all(fList.map(af=>extractTextFromFile(af.file)));
       const parts=contents.map((c,i)=>{
-        if(c.kind==="pdf")return{type:"document",source:{type:"base64",media_type:"application/pdf",data:c.data}};
-        if(c.kind==="image")return{type:"image",source:{type:"base64",media_type:c.mime,data:c.data}};
-        return{type:"text",text:`\n--- ไฟล์: "${fList[i].name}" ---\n${c.content.slice(0,3000)}\n`};
+        if(c.kind==="pdf"){
+          // Cap PDF base64 at ~2MB to stay within edge function limits
+          const data = c.data.length > 2_800_000 ? c.data.slice(0, 2_800_000) : c.data;
+          return{type:"document",source:{type:"base64",media_type:"application/pdf",data}};
+        }
+        if(c.kind==="image"){
+          const data = c.data.length > 1_400_000 ? c.data.slice(0, 1_400_000) : c.data;
+          return{type:"image",source:{type:"base64",media_type:c.mime,data}};
+        }
+        return{type:"text",text:`\n--- ไฟล์: "${fList[i].name}" ---\n${c.content.slice(0,4000)}\n`};
       });
       parts.push({type:"text",text:`\n\nเกณฑ์ PA: ${item.code} – ${item.desc}\nน้ำหนัก: ${item.w} | เกณฑ์คะแนน: ${item.hint}\n\nงาน: สรุปกิจกรรมที่ตรงเกณฑ์นี้เป็นภาษาไทย กระชับ 2–3 ประโยค ระบุชื่อโครงการ/กิจกรรม วันที่ หน่วยงาน และผลที่ได้ จากนั้นแนะนำคะแนน 0–10\nตอบด้วย JSON เท่านั้น: {"activity":"...","score":"N"}`});
       const result=await callClaude([{role:"user",content:parts}],"คุณเป็นผู้ช่วยกรอกแบบประเมินผลการปฏิบัติงาน (PA) คณะศิลปศาสตร์ มหาวิทยาลัยมหิดล วิเคราะห์หลักฐานแล้วตอบด้วย JSON เท่านั้น ห้ามมี text นอก JSON");
       setFormData(prev=>({...prev,[item.code]:{...prev[item.code],activity:result.activity||"",score:result.score||"",status:"ai-filled"}}));
       showToast(`✅ AI กรอก ${item.code} เรียบร้อย`);
     }catch(e){
-      const msg=e.message.includes("ANTHROPIC_API_KEY")?"⚠️ ยังไม่ได้ตั้งค่า API Key ใน Vercel Environment Variables":`เกิดข้อผิดพลาด: ${e.message}`;
+      const raw = e?.message || String(e) || "ข้อผิดพลาดที่ไม่ทราบสาเหตุ";
+      const msg = raw.includes("ANTHROPIC_API_KEY") ? "⚠️ ยังไม่ได้ตั้งค่า API Key — ดูขั้นตอนใน README"
+                : raw.includes("ใหญ่เกิน") ? "⚠️ " + raw
+                : `❌ ${raw}`;
       showToast(msg,"error");
     }finally{setExtracting(null);}
   };
