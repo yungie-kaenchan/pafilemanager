@@ -38,7 +38,7 @@ async function callClaude(messages,system){
   try{return JSON.parse(clean);}catch{return{activity:txt.slice(0,400),score:""};}
 }
 
-function Toast({toast}){if(!toast)return null;const bg=toast.type==="error"?T.err:toast.type==="info"?T.accent:T.primary;return(<div style={{position:"fixed",top:20,right:20,zIndex:9999,padding:"12px 20px",borderRadius:12,background:bg,color:"white",fontSize:22,fontWeight:500,boxShadow:"0 8px 32px rgba(0,0,0,0.18)",maxWidth:380,lineHeight:1.5}}>{toast.msg}</div>);}
+function Toast({toast}){if(!toast)return null;const bg=toast.type==="error"?T.err:toast.type==="info"?T.accent:T.primary;return(<div style={{position:"fixed",top:20,right:20,zIndex:9999,padding:"12px 20px",borderRadius:12,background:bg,color:"white",fontSize:18,fontWeight:500,boxShadow:"0 8px 32px rgba(0,0,0,0.18)",maxWidth:380,lineHeight:1.5}}>{toast.msg}</div>);}
 
 function FileCard({f,onRemove,onAssign}){
   const ext=f.name.split(".").pop().toUpperCase();
@@ -53,20 +53,20 @@ function FileCard({f,onRemove,onAssign}){
           <p style={{margin:0,fontSize:15,color:T.text,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{f.name}</p>
           <div style={{marginTop:4}}>
             {f.assignedCode
-              ?<span onClick={()=>setOpen(o=>!o)} style={{cursor:"pointer",padding:"2px 8px",borderRadius:99,background:"#d1fae5",color:"#065f46",fontSize:22,fontWeight:700,border:"1px solid #a7f3d0"}}>↔ {f.assignedCode}</span>
-              :<span onClick={()=>setOpen(o=>!o)} style={{cursor:"pointer",padding:"2px 8px",borderRadius:99,background:T.primaryBg,color:T.primary,fontSize:22,border:`1px solid ${T.borderMid}`}}>+ กำหนดรหัส</span>}
+              ?<span onClick={()=>setOpen(o=>!o)} style={{cursor:"pointer",padding:"2px 8px",borderRadius:99,background:"#d1fae5",color:"#065f46",fontSize:18,fontWeight:700,border:"1px solid #a7f3d0"}}>↔ {f.assignedCode}</span>
+              :<span onClick={()=>setOpen(o=>!o)} style={{cursor:"pointer",padding:"2px 8px",borderRadius:99,background:T.primaryBg,color:T.primary,fontSize:18,border:`1px solid ${T.borderMid}`}}>+ กำหนดรหัส</span>}
           </div>
         </div>
-        <button onClick={onRemove} style={{background:"none",border:"none",color:T.textMuted,cursor:"pointer",fontSize:22,lineHeight:1,padding:2}}>×</button>
+        <button onClick={onRemove} style={{background:"none",border:"none",color:T.textMuted,cursor:"pointer",fontSize:18,lineHeight:1,padding:2}}>×</button>
       </div>
       {open&&(
         <div style={{position:"absolute",left:0,right:0,top:"100%",zIndex:200,background:T.surface,border:`1px solid ${T.borderMid}`,borderRadius:10,boxShadow:T.shadowMd,maxHeight:220,overflowY:"auto",marginTop:4}}>
-          <div style={{padding:"6px 12px",fontSize:22,color:T.textMuted,borderBottom:`1px solid ${T.border}`,fontWeight:600}}>เลือกเกณฑ์</div>
+          <div style={{padding:"6px 12px",fontSize:18,color:T.textMuted,borderBottom:`1px solid ${T.border}`,fontWeight:600}}>เลือกเกณฑ์</div>
           {PA_SECTIONS.map(sec=>(
             <div key={sec.id}>
-              <div style={{padding:"4px 12px",fontSize:22,color:sec.accent,fontWeight:800,background:`${sec.accent}10`}}>{sec.short}</div>
+              <div style={{padding:"4px 12px",fontSize:18,color:sec.accent,fontWeight:800,background:`${sec.accent}10`}}>{sec.short}</div>
               {sec.items.map(item=>(
-                <div key={item.code} onClick={()=>{onAssign(item.code);setOpen(false);}} style={{padding:"5px 14px",fontSize:22,color:T.text,cursor:"pointer"}} onMouseOver={e=>e.currentTarget.style.background=T.primaryBg} onMouseOut={e=>e.currentTarget.style.background="transparent"}>
+                <div key={item.code} onClick={()=>{onAssign(item.code);setOpen(false);}} style={{padding:"5px 14px",fontSize:18,color:T.text,cursor:"pointer"}} onMouseOver={e=>e.currentTarget.style.background=T.primaryBg} onMouseOut={e=>e.currentTarget.style.background="transparent"}>
                   <strong>{item.code}</strong> — {item.desc.slice(0,48)}{item.desc.length>48?"…":""}
                 </div>
               ))}
@@ -91,26 +91,26 @@ function CriterionRow({item,d,filesList,onUpdate,onExtract,isExtracting}){
             <span style={{width:8,height:8,borderRadius:99,background:dotColor,display:"inline-block",flexShrink:0}}/>
             <span style={{fontFamily:"monospace",fontWeight:800,fontSize:15,color:T.primaryDark}}>{item.code}</span>
           </div>
-          <span style={{display:"inline-block",padding:"2px 7px",borderRadius:6,background:`${T.primary}15`,color:T.primary,fontSize:22,fontWeight:700}}>×{item.w}</span>
-          {filesList.length>0&&(<div style={{marginTop:5}}>{filesList.map((f,i)=>(<div key={i} style={{fontSize:15,color:T.aiGreen,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:80}}>📎 {f.name.slice(0,14)}…</div>))}</div>)}
+          <span style={{display:"inline-block",padding:"2px 7px",borderRadius:6,background:`${T.primary}15`,color:T.primary,fontSize:18,fontWeight:700}}>×{item.w}</span>
+          {filesList.length>0&&(<div style={{marginTop:5}}>{filesList.map((f,i)=>(<div key={i} style={{fontSize:15,color:T.aiGreen,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:100}}>📎 {f.name.slice(0,14)}…</div>))}</div>)}
         </div>
         <div>
           <p style={{margin:"0 0 4px",fontSize:15,color:T.textMid,lineHeight:1.5}}>
             {item.desc}
-            <span style={{cursor:"pointer",marginLeft:6,color:T.accent,fontSize:22,fontWeight:700}} onClick={()=>setShowHint(h=>!h)}>{showHint?"▲ซ่อน":"ℹ เกณฑ์"}</span>
+            <span style={{cursor:"pointer",marginLeft:6,color:T.accent,fontSize:18,fontWeight:700}} onClick={()=>setShowHint(h=>!h)}>{showHint?"▲ซ่อน":"ℹ เกณฑ์"}</span>
           </p>
-          {showHint&&(<p style={{margin:"0 0 5px",fontSize:22,color:"#64748b",background:"#f1f5f9",padding:"5px 8px",borderRadius:6,border:"1px solid #e2e8f0",lineHeight:1.5}}>{item.hint}</p>)}
+          {showHint&&(<p style={{margin:"0 0 5px",fontSize:18,color:"#64748b",background:"#f1f5f9",padding:"5px 8px",borderRadius:6,border:"1px solid #e2e8f0",lineHeight:1.5}}>{item.hint}</p>)}
           <textarea value={d.activity} onChange={e=>onUpdate(item.code,"activity",e.target.value)} placeholder="อธิบายกิจกรรม/ผลการปฏิบัติงาน (ภาษาไทย)..." rows={Math.max(2,(d.activity||"").split("\n").length+(d.activity?0:1))} style={{width:"100%",background:T.surface,border:`1.5px solid ${T.border}`,borderRadius:7,color:T.text,fontSize:15,padding:"7px 10px",resize:"vertical",fontFamily:"'Sarabun',sans-serif",lineHeight:1.6,boxSizing:"border-box",outline:"none"}} onFocus={e=>e.target.style.borderColor=T.primaryLight} onBlur={e=>e.target.style.borderColor=T.border}/>
         </div>
       </div>
       <div style={{paddingLeft:10,display:"flex",flexDirection:"column",alignItems:"center",gap:7,paddingTop:2}}>
-        <span style={{fontSize:22,color:T.textMuted,fontWeight:600}}>คะแนน</span>
+        <span style={{fontSize:18,color:T.textMuted,fontWeight:600}}>คะแนน</span>
         <span style={{fontSize:15,color:T.textMuted}}>(0–10)</span>
-        <input type="number" min={0} max={10} step={0.5} value={d.score} onChange={e=>onUpdate(item.code,"score",e.target.value)} style={{width:68,background:T.surface,border:`2px solid ${d.score?T.primary:T.border}`,borderRadius:8,color:T.primaryDark,fontSize:21,fontWeight:700,textAlign:"center",padding:"5px 4px",outline:"none"}}/>
-        <button onClick={()=>onExtract(item)} disabled={isExtracting||filesList.length===0} title={filesList.length===0?"แนบไฟล์ก่อน":"AI สกัดข้อมูลจากไฟล์"} style={{width:72,padding:"8px 0",borderRadius:7,border:"none",background:filesList.length===0?"#e2e8f0":isExtracting?T.borderMid:`linear-gradient(135deg,${T.primary},${T.accent})`,color:filesList.length===0?T.textMuted:"white",fontSize:22,cursor:filesList.length===0?"not-allowed":"pointer",fontWeight:600}}>
+        <input type="number" min={0} max={10} step={0.5} value={d.score} onChange={e=>onUpdate(item.code,"score",e.target.value)} style={{width:68,background:T.surface,border:`2px solid ${d.score?T.primary:T.border}`,borderRadius:8,color:T.primaryDark,fontSize:18,fontWeight:700,textAlign:"center",padding:"5px 4px",outline:"none"}}/>
+        <button onClick={()=>onExtract(item)} disabled={isExtracting||filesList.length===0} title={filesList.length===0?"แนบไฟล์ก่อน":"AI สกัดข้อมูลจากไฟล์"} style={{width:72,padding:"8px 0",borderRadius:7,border:"none",background:filesList.length===0?"#e2e8f0":isExtracting?T.borderMid:`linear-gradient(135deg,${T.primary},${T.accent})`,color:filesList.length===0?T.textMuted:"white",fontSize:18,cursor:filesList.length===0?"not-allowed":"pointer",fontWeight:600}}>
           {isExtracting?"⏳":"⚡ AI"}
         </button>
-        <span style={{fontSize:22,color:dotColor,fontWeight:700}}>{status==="ai-filled"?"🤖":d.activity?"✓":"—"}</span>
+        <span style={{fontSize:18,color:dotColor,fontWeight:700}}>{status==="ai-filled"?"🤖":d.activity?"✓":"—"}</span>
       </div>
     </div>
   );
@@ -123,11 +123,11 @@ function SectionAccordion({sec,formData,onUpdate,onExtract,extracting,getFiles,i
     <div style={{border:`1px solid ${T.border}`,borderRadius:12,overflow:"hidden",marginBottom:10,boxShadow:T.shadow}}>
       <div onClick={onToggle} style={{display:"flex",alignItems:"center",gap:12,padding:"13px 20px",cursor:"pointer",background:isOpen?`${sec.accent}10`:T.surface,borderBottom:isOpen?`1px solid ${T.border}`:"none",userSelect:"none"}}>
         <div style={{width:4,height:28,borderRadius:2,background:sec.accent,flexShrink:0}}/>
-        <div style={{flex:1}}><span style={{fontWeight:700,fontSize:22.5,color:T.text}}>{sec.title}</span></div>
+        <div style={{flex:1}}><span style={{fontWeight:700,fontSize:18.5,color:T.text}}>{sec.title}</span></div>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
           <div style={{width:80,height:5,background:T.border,borderRadius:3}}><div style={{width:`${pct}%`,height:"100%",background:sec.accent,borderRadius:3,transition:"width 0.5s"}}/></div>
           <span style={{fontSize:15,color:T.textMuted,minWidth:48,textAlign:"right"}}>{filled}/{sec.items.length}</span>
-          <span style={{color:sec.accent,fontSize:22,transform:isOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s",fontWeight:700}}>▼</span>
+          <span style={{color:sec.accent,fontSize:18,transform:isOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s",fontWeight:700}}>▼</span>
         </div>
       </div>
       {isOpen&&(<div>{sec.items.map(item=>(<CriterionRow key={item.code} item={item} d={formData[item.code]||{activity:"",score:"",status:"empty"}} filesList={getFiles(item.code)} onUpdate={onUpdate} onExtract={onExtract} isExtracting={extracting===item.code}/>))}</div>)}
@@ -211,10 +211,10 @@ export default function PAAssistant(){
       <header style={{background:T.surface,borderBottom:`2px solid ${T.borderMid}`,padding:"0 24px",position:"sticky",top:0,zIndex:50,boxShadow:T.shadow}}>
         <div style={{maxWidth:1400,margin:"0 auto",display:"flex",alignItems:"center",gap:16,height:72}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
-            <div style={{width:36,height:36,borderRadius:10,background:`linear-gradient(135deg,${T.primary},${T.accent})`,display:"flex",alignItems:"center",justifyContent:"center",color:"white",fontSize:21,flexShrink:0}}>📋</div>
+            <div style={{width:36,height:36,borderRadius:10,background:`linear-gradient(135deg,${T.primary},${T.accent})`,display:"flex",alignItems:"center",justifyContent:"center",color:"white",fontSize:18,flexShrink:0}}>📋</div>
             <div>
-              <h1 style={{margin:0,fontSize:22,fontWeight:800,color:T.primaryDark,lineHeight:1.2}}>PA Assistant</h1>
-              <p style={{margin:0,fontSize:22,color:T.textMuted}}>คณะศิลปศาสตร์ มหาวิทยาลัยมหิดล</p>
+              <h1 style={{margin:0,fontSize:18,fontWeight:800,color:T.primaryDark,lineHeight:1.2}}>PA Assistant</h1>
+              <p style={{margin:0,fontSize:18,color:T.textMuted}}>คณะศิลปศาสตร์ มหาวิทยาลัยมหิดล</p>
             </div>
           </div>
           <div style={{flex:1,display:"flex",alignItems:"center",gap:8,padding:"0 16px"}}>
@@ -237,8 +237,8 @@ export default function PAAssistant(){
           <div style={{maxWidth:1400,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12}}>
             {[["name","ชื่อ-สกุล"],["position","ตำแหน่ง"],["department","สังกัดหลักสูตร"],["faculty","คณะ"],["supervisor","ผู้บังคับบัญชา"],["period","รอบการประเมิน"]].map(([k,label])=>(
               <div key={k}>
-                <label style={{display:"block",fontSize:22,color:T.textMuted,marginBottom:4,fontWeight:700}}>{label}</label>
-                <input value={info[k]} onChange={e=>setInfo(p=>({...p,[k]:e.target.value}))} style={{width:"100%",background:T.bg,border:`1.5px solid ${T.border}`,borderRadius:7,color:T.text,fontSize:22,padding:"7px 10px",boxSizing:"border-box",outline:"none",fontFamily:"'Sarabun',sans-serif"}} onFocus={e=>e.target.style.borderColor=T.primary} onBlur={e=>e.target.style.borderColor=T.border}/>
+                <label style={{display:"block",fontSize:18,color:T.textMuted,marginBottom:4,fontWeight:700}}>{label}</label>
+                <input value={info[k]} onChange={e=>setInfo(p=>({...p,[k]:e.target.value}))} style={{width:"100%",background:T.bg,border:`1.5px solid ${T.border}`,borderRadius:7,color:T.text,fontSize:18,padding:"7px 10px",boxSizing:"border-box",outline:"none",fontFamily:"'Sarabun',sans-serif"}} onFocus={e=>e.target.style.borderColor=T.primary} onBlur={e=>e.target.style.borderColor=T.border}/>
               </div>
             ))}
           </div>
@@ -246,33 +246,33 @@ export default function PAAssistant(){
       )}
 
       {/* BODY */}
-      <div style={{maxWidth:1400,margin:"0 auto",display:"grid",gridTemplateColumns:"290px 1fr",gap:0,minHeight:"calc(100vh - 72px)"}}>
+      <div style={{maxWidth:1400,margin:"0 auto",display:"grid",gridTemplateColumns:"360px 1fr",gap:0,minHeight:"calc(100vh - 72px)"}}>
 
         {/* FILE PANEL */}
         <aside style={{background:T.surface,borderRight:`1px solid ${T.border}`,display:"flex",flexDirection:"column",minHeight:0,position:"sticky",top:72,height:"calc(100vh - 72px)",overflow:"hidden"}}>
           <div style={{padding:"14px 16px",borderBottom:`1px solid ${T.border}`,background:`${T.primary}08`}}>
-            <p style={{margin:0,fontSize:22,fontWeight:800,color:T.primaryDark}}>📁 ไฟล์หลักฐาน</p>
-            <p style={{margin:"2px 0 0",fontSize:22,color:T.textMuted}}>{files.length} ไฟล์ | ลากมาวางหรือคลิกเลือก</p>
+            <p style={{margin:0,fontSize:18,fontWeight:800,color:T.primaryDark}}>📁 ไฟล์หลักฐาน</p>
+            <p style={{margin:"2px 0 0",fontSize:18,color:T.textMuted}}>{files.length} ไฟล์ | ลากมาวางหรือคลิกเลือก</p>
           </div>
           <div onDrop={handleDrop} onDragOver={e=>{e.preventDefault();setIsDragging(true);}} onDragLeave={()=>setIsDragging(false)} onClick={()=>fileInputRef.current?.click()} style={{margin:"12px 12px 0",border:`2px dashed ${isDragging?T.primaryLight:T.borderMid}`,borderRadius:12,padding:"18px 12px",textAlign:"center",cursor:"pointer",background:isDragging?`${T.primary}08`:T.bg,transition:"all 0.2s"}}>
-            <div style={{fontSize:30,marginBottom:6}}>📂</div>
+            <div style={{fontSize:24,marginBottom:6}}>📂</div>
             <p style={{margin:0,fontSize:15,color:T.textMid,fontWeight:600}}>ลากไฟล์มาวางที่นี่</p>
-            <p style={{margin:"4px 0 0",fontSize:22,color:T.textMuted}}>PDF · DOCX · JPG · PNG</p>
+            <p style={{margin:"4px 0 0",fontSize:18,color:T.textMuted}}>PDF · DOCX · JPG · PNG</p>
             <input ref={fileInputRef} type="file" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style={{display:"none"}} onChange={e=>processFiles(Array.from(e.target.files))}/>
           </div>
           <div style={{margin:"8px 12px 0",padding:"8px 10px",background:"#fffbeb",borderRadius:8,border:"1px solid #fde68a"}}>
-            <p style={{margin:0,fontSize:22,color:"#92400e",lineHeight:1.5}}>💡 ชื่อไฟล์ขึ้นต้นด้วยรหัส เช่น <strong>3_4_จดหมาย...</strong> → จับคู่กับ 3.4 อัตโนมัติ</p>
+            <p style={{margin:0,fontSize:18,color:"#92400e",lineHeight:1.5}}>💡 ชื่อไฟล์ขึ้นต้นด้วยรหัส เช่น <strong>3_4_จดหมาย...</strong> → จับคู่กับ 3.4 อัตโนมัติ</p>
           </div>
           <div style={{flex:1,overflowY:"auto",padding:"8px 12px"}}>
             {files.length===0?(<div style={{textAlign:"center",padding:"30px 12px",color:T.textMuted,fontSize:15,lineHeight:1.8}}>ยังไม่มีไฟล์<br/>อัปโหลดไฟล์หลักฐานเพื่อ<br/>ให้ AI ช่วยกรอกข้อมูล</div>):files.map(f=>(<FileCard key={f.id} f={f} onRemove={()=>setFiles(p=>p.filter(x=>x.id!==f.id))} onAssign={code=>assignFile(f.id,code)}/>))}
           </div>
           {files.length>0&&(
             <div style={{padding:"10px 16px",borderTop:`1px solid ${T.border}`,display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,background:T.bg}}>
-              <div style={{textAlign:"center",padding:"6px 0",borderRadius:8,background:"#d1fae5"}}><div style={{fontSize:22,fontWeight:800,color:"#065f46"}}>{files.filter(f=>f.assignedCode).length}</div><div style={{fontSize:22,color:"#6ee7b7",fontWeight:600}}>จับคู่แล้ว</div></div>
-              <div style={{textAlign:"center",padding:"6px 0",borderRadius:8,background:"#fef3c7"}}><div style={{fontSize:22,fontWeight:800,color:"#92400e"}}>{files.filter(f=>!f.assignedCode).length}</div><div style={{fontSize:22,color:"#fcd34d",fontWeight:600}}>รอกำหนดรหัส</div></div>
+              <div style={{textAlign:"center",padding:"6px 0",borderRadius:8,background:"#d1fae5"}}><div style={{fontSize:18,fontWeight:800,color:"#065f46"}}>{files.filter(f=>f.assignedCode).length}</div><div style={{fontSize:18,color:"#6ee7b7",fontWeight:600}}>จับคู่แล้ว</div></div>
+              <div style={{textAlign:"center",padding:"6px 0",borderRadius:8,background:"#fef3c7"}}><div style={{fontSize:18,fontWeight:800,color:"#92400e"}}>{files.filter(f=>!f.assignedCode).length}</div><div style={{fontSize:18,color:"#fcd34d",fontWeight:600}}>รอกำหนดรหัส</div></div>
             </div>
           )}
-          <div style={{padding:"10px 14px",borderTop:`1px solid ${T.border}`,background:"#eff6ff",fontSize:22,color:"#1e40af",lineHeight:1.6}}>
+          <div style={{padding:"10px 14px",borderTop:`1px solid ${T.border}`,background:"#eff6ff",fontSize:18,color:"#1e40af",lineHeight:1.6}}>
             🔑 <strong>ใช้ AI ครั้งแรก:</strong> ต้องตั้งค่า <code>ANTHROPIC_API_KEY</code> ใน Vercel → Settings → Environment Variables
           </div>
         </aside>
@@ -280,10 +280,10 @@ export default function PAAssistant(){
         {/* FORM PANEL */}
         <main style={{padding:"20px 24px",overflowY:"auto"}}>
           <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:16}}>
-            {PA_SECTIONS.map(sec=>{const n=sec.items.filter(i=>formData[i.code]?.activity).length;return(<button key={sec.id} onClick={()=>toggleSection(sec.id)} style={{padding:"5px 14px",borderRadius:99,border:`1.5px solid ${openSections.has(sec.id)?sec.accent:T.border}`,background:openSections.has(sec.id)?`${sec.accent}12`:T.surface,color:openSections.has(sec.id)?sec.accent:T.textMuted,fontSize:22,fontWeight:700,cursor:"pointer",transition:"all 0.2s"}}>{sec.short} ({n}/{sec.items.length})</button>);})}
+            {PA_SECTIONS.map(sec=>{const n=sec.items.filter(i=>formData[i.code]?.activity).length;return(<button key={sec.id} onClick={()=>toggleSection(sec.id)} style={{padding:"5px 14px",borderRadius:99,border:`1.5px solid ${openSections.has(sec.id)?sec.accent:T.border}`,background:openSections.has(sec.id)?`${sec.accent}12`:T.surface,color:openSections.has(sec.id)?sec.accent:T.textMuted,fontSize:18,fontWeight:700,cursor:"pointer",transition:"all 0.2s"}}>{sec.short} ({n}/{sec.items.length})</button>);})}
           </div>
           {PA_SECTIONS.map(sec=>(<SectionAccordion key={sec.id} sec={sec} formData={formData} onUpdate={updateField} onExtract={extractForItem} extracting={extracting} getFiles={getFilesForCode} isOpen={openSections.has(sec.id)} onToggle={()=>toggleSection(sec.id)}/>))}
-          <div style={{textAlign:"center",padding:"16px 0",color:T.textMuted,fontSize:22,borderTop:`1px solid ${T.border}`,marginTop:8}}>
+          <div style={{textAlign:"center",padding:"16px 0",color:T.textMuted,fontSize:18,borderTop:`1px solid ${T.border}`,marginTop:8}}>
             🟢 AI กรอก &nbsp;|&nbsp; 🟡 กรอกเอง &nbsp;|&nbsp; ⚪ ยังว่าง &nbsp;|&nbsp; คะแนน AI เป็นข้อเสนอแนะ — ตรวจสอบก่อน Export เสมอ
           </div>
         </main>
